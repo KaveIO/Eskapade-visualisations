@@ -1,0 +1,21 @@
+.app-header {
+    height: 60px;
+    line-height: 60px;
+    border-bottom: thin lightgrey solid;
+}
+
+.app-header .app-header--title {
+    font-size: 22px;
+    font:'KPMG';
+    padding-left: 5px;
+}
+
+.dash-header {
+    font-family: KPMG;
+    font-size: 2em
+}
+
+.dash-cell {
+    font-family: arial;
+    font-size: .9em;
+}

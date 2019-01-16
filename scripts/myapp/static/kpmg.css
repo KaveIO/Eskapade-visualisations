@@ -1,0 +1,35 @@
+.bk-root {
+    background-color: #1d2930;
+    /*font-family: "KPMG", sans-serif;*/
+}
+.bk-data-table{
+    background-color: #263740;
+}
+.app-header {
+    height: 60px;
+    line-height: 60px;
+    border-bottom: thin lightgrey solid;
+}
+
+.app-header .app-header--title {
+    font-size: 22px;
+    /*font:'KPMG';*/
+    padding-left: 5px;
+}
+
+.slick-cell {
+    background-color: #515E66
+}
+
+.slick-cell.active{
+    background-color: #717c82
+}
+
+.slick-cell.bk-cell-index {
+    background-color:  #203642
+}
+
+bk-root .slick-cell.selected {
+    background-color: #717c82
+  
+}
