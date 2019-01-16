@@ -84,7 +84,7 @@ correlation matrices for ordinal, categorical and continuous variables. It also
 allows for manual editing of the bin edges for continuous variables.
 The demo uses the diamond dataset as input.
 
-**Contact and support**
+## Contact and support
 Issues & Ideas: https://github.com/kaveio/Eskapade-visualisations/issues
 Q&A Support: contact us at: kave [at] kpmg [dot] com
 Please note that the KPMG Eskapade group provides support only on a best-effort basis.
