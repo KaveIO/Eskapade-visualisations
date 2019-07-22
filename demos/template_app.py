@@ -21,7 +21,7 @@ import os
 # ['anscombe', 'attention', 'brain_networks', 'car_crashes', 'diamonds', 'dots', 'exercise', 'flights', 'fmri', 'gammas', 'iris', 'mpg', 'planets', 'tips', 'titanic']
 # ds_name = 'diamonds'
 # df = sns.load_dataset(ds_name)
-df = pd.read_csv('../data/HTM_KV6_20140108.csv', sep=';', header=None)
+df = pd.read_csv('../data/KV6_opendata_20140108.csv', sep=';', header=None)
 df.columns = ['Timestamp1 UTC','Timestamp2 EUROPE/LONDEN','Timestamp3 EUROPE/LONDEN','EVENT','OperatingDay ','DataOwnerCode','LinePlanningNumber','JourneyNumber',
 'ONBEKEND','UserStopCode','ONBEKEND','DistanceSinceLastUserStop','Punctuality','RD-X RDS','RD-Y RDS','BlockCode',
  'VehicleNumber','WheelChairAccesible','Source','ONBEKEND',]

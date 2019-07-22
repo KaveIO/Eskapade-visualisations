@@ -1,4 +1,4 @@
-"""Project: Eskapade - A python-based package for data analysis.
+"""Project: Eskapade - A _python-based package for data analysis.
 
 Macro: df_summary_macro
 
@@ -19,8 +19,7 @@ LICENSE.
 """
 
 import os
-import pandas as pd
-from eskapade import process_manager, Chain, ConfigObject, DataStore
+from eskapade import process_manager, Chain, ConfigObject
 from eskapade.logger import Logger, LogLevel
 from eskapade.analysis.links import ReadToDf
 from eskapade_viz import links
@@ -63,7 +62,7 @@ link = links.DfSummaryDash(read_key='data',
                            assets_path=os.path.join(settings['base_path'], '../../../macros/assets/'),
                            hue_cols=['pl_hostname', 'pl_letter', 'pl_discmethod', 'pl_pnum', 'st_sp', 'pl_disc_reflink',
                                      'pl_locale', 'pl_facility', 'pl_telescope', 'pl_instrument', 'pl_mnum']
-)
+                           )
 link.logger.log_level = LogLevel.DEBUG
 ch.add(link)
 

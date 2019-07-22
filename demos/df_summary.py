@@ -9,7 +9,7 @@ import plotly.graph_objs as go
 import pandas as pd
 
 # -- data
-df = pd.read_csv('../data/HTM_KV6_20140108.csv', sep=';', header=None)
+df = pd.read_csv('../data/KV6_opendata_20140108.csv', sep=';', header=None)
 df.columns = ['Timestamp1 UTC','Timestamp2 EUROPE/LONDEN','Timestamp3 EUROPE/LONDEN','EVENT','OperatingDay ','DataOwnerCode','LinePlanningNumber','JourneyNumber',
 'ONBEKEND','UserStopCode','ONBEKEND','DistanceSinceLastUserStop','Punctuality','RD-X RDS','RD-Y RDS','BlockCode',
  'VehicleNumber','WheelChairAccesible','Source','ONBEKEND',]

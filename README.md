@@ -5,7 +5,7 @@
  - Web page: http://eskapade.kave.io
  - Repository: https://github.com/kaveio/Eskapade-visualisations
 
-Eskapade is a light-weight, python-based data analysis framework, meant
+Eskapade is a light-weight, _python-based data analysis framework, meant
 for developing and modularizing all sorts of data analysis problems into
 reusable analysis components.
 
@@ -60,7 +60,7 @@ Demonstrates the capabilities of the interface without
 actually calculating any correlations. It can handle both categorical and
 continuous data, and allows the user to manually change the number and edges of
 histogram bins. Since little calculation happens, this version is snappy and
-easy to work out new ideas on. The code is a standalone python script located at
+easy to work out new ideas on. The code is a standalone _python script located at
 `heatmap/bin_count_demo_dash.py`.
 
 **The link version**
@@ -76,7 +76,7 @@ package and corresponding correlation link to use as a back end.
 
 Demonstrates the actual capabilities of the phi_k correlation analyzer package.
 Consists of one file, `phik_frontend.py` which can be called from the `heatmap` folder
-using `python phik_frontend.py` to start the flask server.
+using `_python phik_frontend.py` to start the flask server.
 **NB: as it currently stands, if the app is called from outside the heatmap folder the
 .css files will not load correctly and the app will not be formatted correctly.**
 As per default the app will server on `http://localhost:8050`. This version supports calculating
