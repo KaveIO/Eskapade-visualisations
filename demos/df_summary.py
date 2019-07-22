@@ -2,46 +2,50 @@ import dash
 import dash_table
 import dash_core_components as dcc
 import dash_html_components as html
-import seaborn as sns
+from dash.dependencies import Input, Output, State
+from viz_k.dash import dash_utils as du
 
+import seaborn as sns
+import os
 import plotly.graph_objs as go
 
 import pandas as pd
+import numpy as np
+from pandas_profiling.model.describe import describe as describe_df
+
+base_path = os.path.abspath(os.path.dirname(__file__))
+print('Base path\n', base_path)
 
 # -- data
-df = pd.read_csv('../data/KV6_opendata_20140108.csv', sep=';', header=None)
-df.columns = ['Timestamp1 UTC','Timestamp2 EUROPE/LONDEN','Timestamp3 EUROPE/LONDEN','EVENT','OperatingDay ','DataOwnerCode','LinePlanningNumber','JourneyNumber',
-'ONBEKEND','UserStopCode','ONBEKEND','DistanceSinceLastUserStop','Punctuality','RD-X RDS','RD-Y RDS','BlockCode',
- 'VehicleNumber','WheelChairAccesible','Source','ONBEKEND',]
-#colnames = pd.read_csv('../data/planets.csv', sep=';', nrows=354, skiprows=2)
-#colnames['dict'] = colnames['#'].apply(lambda x: x[8:])
-#colnames['dict'] = colnames['dict'].apply(lambda x: {x.split(':')[0].strip(): x.split(':')[1].strip()}).values
-colnames = [str(x) for x in df.columns]
+# df = pd.read_csv('./data/diamonds.csv', sep=',', index_col=0)
+df = sns.load_dataset('diamonds')
+# using pandas profiling to create the description
+desc = describe_df(df)
+variables = desc['variables']
+variables = {k: v for k, v in variables.items() if str(v['type'] != 'Variabe.TYPE_UNSUPPORTED')}
+cats = {col: {'CAT': variables[col]['type'],
+              'n_unique': variables[col]['distinct_count'] if
+              str(variables[col]['type']) == "Variable.TYPE_CAT" else 0}
+        for col in variables.keys()}
+
+# get columns
+hue_cols = [k for k, v in cats.items() if
+            (str(v['CAT']) == 'Variable.TYPE_CAT') and (int(v['n_unique']) < 10)]
+data_cols = [k for k, v in cats.items()]
+colnames = data_cols
+
 
 plt_bgcolor = '#263740'
 plt_papercolor = '#1d2930'
 text_color = 'white'
 
 pdict = {x: str(x) for x in colnames}
-# pdict = {}
-# for d in colnames['dict'].values:
-#     pdict.update(d)
-
-hue_cols = ['EVENT', 'VehicleNumber', 'WheelChairAccesible', 'Source', 'BlockCode']
-hue_cols = colnames
-data_cols = colnames
-
-data_cols = ['Timestamp1 UTC', 'Timestamp2 EUROPE/LONDEN', 'Timestamp3 EUROPE/LONDEN', 'EVENT', 'LinePlanningNumber', 'JourneyNumber',
-'UserStopCode', 'DistanceSinceLastUserStop', 'Punctuality', 'RD-X RDS', 'RD-Y RDS', 'BlockCode',
- 'VehicleNumber', 'WheelChairAccesible', 'Source']
-
-ext_sheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # --  app
-app = dash.Dash(__name__, external_stylesheets=ext_sheets)
-app.layout = html.Div( [
-    html.H1('DataFrames: a summary'),
-    html.Div([# -- first column
+app = dash.Dash(__name__)
+app.layout = html.Div([
+    html.H1('DataFrames: A summary'),
+    html.Div([
         html.Div([
             dcc.Graph(id='Histogram',
                       figure={'layout': go.Layout(plot_bgcolor=plt_bgcolor,
@@ -65,51 +69,37 @@ app.layout = html.Div( [
                          style={'width': '80%'}),
             ]
             )], className='five columns'),
-    html.Div([ # --  second column
-        # dcc.Slider(id='bin_slider2',
-        #            min=1,
-        #            max=100,
-        #            step=1,
-        #            value=30),
+    html.Div([
+        html.Div([], className='two columns'),
         html.Div([
             dash_table.DataTable(id='table',
-                                 data=df.describe().to_dict('rows'))
-            # dcc.Graph(id='Table',
-            #           figure={'layout': go.Layout(plot_bgcolor=plt_bgcolor,
-            #                                       paper_bgcolor=plt_papercolor,
-            #                                       font=dict(color=text_color))}),
+                                 data=[],
+                                 columns=[{'name': 'Description', 'id': 'description'},
+                                          {'name': 'Value', 'id': 'value'}],
+                                 style_header={'backgroundColor': plt_bgcolor,
+                                               'fontWeight': 'bold',
+                                               'fontSize': '2em'},
+                                 style_cell={'backgroundColor': plt_papercolor,
+                                             'color': text_color,
+                                             'fontSize': '.7em',
+                                             'height': '5px'},
+                                 style_cell_conditional=[{'if': {'column_id': 'var'},
+                                                         'textAlign': 'left'}]
+                                 )
             ],
-             className='five columns')]
+             className='four columns')]
             )])
-#         ),
-#     html.Div([])# -- bottom row
-#         # html.Div([
-#         #         html.H5("Variable"),
-#         #         dcc.Dropdown(id='x_dropdown',
-#         #                      options=[{'label': pdict[x], 'value': x} for x in data_cols],
-#         #                      value=0, placeholder='Select...',
-#         #                      style={'width': '80%'})],
-#         #          className='five columns'),
-#         html.Div([
-#                 html.H5("Hue"),
-#                 dcc.Dropdown(id='hue_dropdown',
-#                              options=[{'label': pdict[x], 'value': x} for x in hue_cols],
-#                              value=0, placeholder='Select...',
-#                              style={'width': '80%'})],
-#                  className='five columns')]
-#              )
-# ]) #fin
 
 
 # -- update functions
 
 @app.callback(
-    dash.dependencies.Output('Histogram', 'figure'),
-    [dash.dependencies.Input('x_dropdown', 'value'),
-     dash.dependencies.Input('hue_dropdown', 'value'),
-     dash.dependencies.Input('bin_slider1', 'value')])
+    Output('Histogram', 'figure'),
+    [Input('x_dropdown', 'value'),
+     Input('hue_dropdown', 'value'),
+     Input('bin_slider1', 'value')])
 def update_plot(value_x, hue, bins):
-    if hue != 0:
+    if (hue != 0) & (value_x != 0):
         pal = sns.palettes.color_palette('YlGnBu', n_colors=len(df[hue].unique()))
         pal = pal.as_hex()
         return {'data': [go.Histogram(
@@ -124,7 +114,7 @@ def update_plot(value_x, hue, bins):
                           plot_bgcolor=plt_bgcolor,
                           paper_bgcolor=plt_papercolor,
                           font=dict(color=text_color))}
-    else:
+    elif value_x != 0:
         return {'data': [go.Histogram(
                      x=df[value_x],
                      nbinsx=bins,
@@ -135,6 +125,48 @@ def update_plot(value_x, hue, bins):
                           paper_bgcolor=plt_papercolor,
                           font=dict(color=text_color),
                             )}
+    else:
+        return {'data': [],
+                'layout': go.Layout(
+                          xaxis={'title': ''},
+                          plot_bgcolor=plt_bgcolor,
+                          paper_bgcolor=plt_papercolor,
+                          font=dict(color=text_color),
+                            )}
+
+
+@app.callback(Output('table', 'data'),
+              [Input('x_dropdown', 'value')])
+def update_describe(col):
+
+    if (col != 0) and (col is not None):
+        # input_vars = variables[col]
+        # input_vars = {k: v for k, v in input_vars.items() if not isinstance(v, (list, np.ndarray, pd.Series))}
+        # out = [{'description': k, 'value': str(v)} for k, v in input_vars.items()]
+        # output = pd.DataFrame.from_dict(out)
+        #
+        # return output.to_dict('records')
+        return du.data_profile_tables(variables, col).data
+    else:
+        return []
+
+
+@app.callback(Output('table', 'columns'),
+              [Input('x_dropdown', 'value')])
+def update_describe_cols(col):
+    if (col != 0) and (col is not None):
+        return du.data_profile_tables(variables, col).columns
+    else:
+        return []
+
+
+@app.callback(Output('table', 'style_data_conditional'),
+              [Input('x_dropdown', 'value')])
+def update_describe_cols(col):
+    if (col != 0) and (col is not None):
+        return du.data_profile_tables(variables, col).style_data_conditional
+    else:
+        return []
 
 
 if __name__ == '__main__':
