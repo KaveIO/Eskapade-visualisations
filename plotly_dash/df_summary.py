@@ -9,27 +9,31 @@ import plotly.graph_objs as go
 import pandas as pd
 
 # -- data
-df = pd.read_csv('../data/planets.csv', sep=',', skiprows=358, index_col=0)
-colnames = pd.read_csv('../data/planets.csv', sep=';', nrows=354, skiprows=2)
-colnames['dict'] = colnames['#'].apply(lambda x: x[8:])
-colnames['dict'] = colnames['dict'].apply(lambda x: {x.split(':')[0].strip(): x.split(':')[1].strip()}).values
+df = pd.read_csv('../data/HTM_KV6_20140108.csv', sep=';', header=None)
+df.columns = ['Timestamp1 UTC','Timestamp2 EUROPE/LONDEN','Timestamp3 EUROPE/LONDEN','EVENT','OperatingDay ','DataOwnerCode','LinePlanningNumber','JourneyNumber',
+'ONBEKEND','UserStopCode','ONBEKEND','DistanceSinceLastUserStop','Punctuality','RD-X RDS','RD-Y RDS','BlockCode',
+ 'VehicleNumber','WheelChairAccesible','Source','ONBEKEND',]
+#colnames = pd.read_csv('../data/planets.csv', sep=';', nrows=354, skiprows=2)
+#colnames['dict'] = colnames['#'].apply(lambda x: x[8:])
+#colnames['dict'] = colnames['dict'].apply(lambda x: {x.split(':')[0].strip(): x.split(':')[1].strip()}).values
+colnames = [str(x) for x in df.columns]
 
 plt_bgcolor = '#263740'
 plt_papercolor = '#1d2930'
 text_color = 'white'
 
-pdict = {}
-for d in colnames['dict'].values:
-    pdict.update(d)
+pdict = {x: str(x) for x in colnames}
+# pdict = {}
+# for d in colnames['dict'].values:
+#     pdict.update(d)
 
-hue_cols = ['pl_hostname', 'pl_letter', 'pl_discmethod', 'pl_pnum', 'st_sp', 'pl_disc_reflink',
-            'pl_locale', 'pl_facility', 'pl_telescope', 'pl_instrument', 'pl_mnum']
+hue_cols = ['EVENT', 'VehicleNumber', 'WheelChairAccesible', 'Source', 'BlockCode']
+hue_cols = colnames
+data_cols = colnames
 
-data_cols = ['pl_letter', 'pl_pnum', 'pl_orbper', 'pl_orbeccen', 'pl_orbincl', 'pl_dens',
-             'ra', 'st_dist', 'st_optmag', 'st_teff', 'st_mass', 'st_rad', 'pl_tranflag', 'pl_angsep',
-             'pl_orbtper', 'pl_rvamp', 'pl_eqt', 'pl_masse', 'pl_rade', 'pl_trandep',
-             'pl_trandur', 'pl_ratdor', 'pl_disc', 'pl_mnum', 'st_plx', 'st_sp', 'st_lum', 'st_logg',
-             'st_metratio', 'st_age', 'st_vsini']
+data_cols = ['Timestamp1 UTC', 'Timestamp2 EUROPE/LONDEN', 'Timestamp3 EUROPE/LONDEN', 'EVENT', 'LinePlanningNumber', 'JourneyNumber',
+'UserStopCode', 'DistanceSinceLastUserStop', 'Punctuality', 'RD-X RDS', 'RD-Y RDS', 'BlockCode',
+ 'VehicleNumber', 'WheelChairAccesible', 'Source']
 
 ext_sheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 

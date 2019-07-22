@@ -86,5 +86,7 @@ The demo uses the diamond dataset as input.
 
 ## Contact and support
 Issues & Ideas: https://github.com/kaveio/Eskapade-visualisations/issues
+
 Q&A Support: contact us at: kave [at] kpmg [dot] com
+
 Please note that the KPMG Eskapade group provides support only on a best-effort basis.

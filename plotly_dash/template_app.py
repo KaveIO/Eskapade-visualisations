@@ -7,6 +7,7 @@ import plotly.graph_objs as go
 
 import eskapade_viz.dash_utils as du
 from eskapade_viz.dash_utils import row, column
+import pandas as pd
 
 import seaborn as sns
 import os
@@ -18,8 +19,12 @@ import os
 # df = sns.load_dataset('diamonds')
 # selected_options = ['cut', 'color', 'clarity', 'carat']
 # ['anscombe', 'attention', 'brain_networks', 'car_crashes', 'diamonds', 'dots', 'exercise', 'flights', 'fmri', 'gammas', 'iris', 'mpg', 'planets', 'tips', 'titanic']
-ds_name = 'diamonds'
-df = sns.load_dataset(ds_name)
+# ds_name = 'diamonds'
+# df = sns.load_dataset(ds_name)
+df = pd.read_csv('../data/HTM_KV6_20140108.csv', sep=';', header=None)
+df.columns = ['Timestamp1 UTC','Timestamp2 EUROPE/LONDEN','Timestamp3 EUROPE/LONDEN','EVENT','OperatingDay ','DataOwnerCode','LinePlanningNumber','JourneyNumber',
+'ONBEKEND','UserStopCode','ONBEKEND','DistanceSinceLastUserStop','Punctuality','RD-X RDS','RD-Y RDS','BlockCode',
+ 'VehicleNumber','WheelChairAccesible','Source','ONBEKEND',]
 selected_options = df.loc[:, df.nunique() < 10].columns
 
 
