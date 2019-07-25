@@ -5,9 +5,10 @@ from dash.dependencies import Output, Input
 
 import plotly.graph_objs as go
 
-import eskapade_viz.dash_utils as du
-from eskapade_viz.dash_utils import row, column
+import viz_k.dash.dash_utils as du
+from viz_k.dash.dash_utils import row, column
 import pandas as pd
+from pandas_profiling.model.describe import describe as describe_df
 
 import seaborn as sns
 import os
@@ -16,16 +17,22 @@ import os
 # dash_utils in the eskapade_viz package.
 
 # -- DATA
-# df = sns.load_dataset('diamonds')
-# selected_options = ['cut', 'color', 'clarity', 'carat']
-# ['anscombe', 'attention', 'brain_networks', 'car_crashes', 'diamonds', 'dots', 'exercise', 'flights', 'fmri', 'gammas', 'iris', 'mpg', 'planets', 'tips', 'titanic']
-# ds_name = 'diamonds'
-# df = sns.load_dataset(ds_name)
-df = pd.read_csv('../data/KV6_opendata_20140108.csv', sep=';', header=None)
-df.columns = ['Timestamp1 UTC','Timestamp2 EUROPE/LONDEN','Timestamp3 EUROPE/LONDEN','EVENT','OperatingDay ','DataOwnerCode','LinePlanningNumber','JourneyNumber',
-'ONBEKEND','UserStopCode','ONBEKEND','DistanceSinceLastUserStop','Punctuality','RD-X RDS','RD-Y RDS','BlockCode',
- 'VehicleNumber','WheelChairAccesible','Source','ONBEKEND',]
-selected_options = df.loc[:, df.nunique() < 10].columns
+df = sns.load_dataset('diamonds')
+# TODO: Add a data uploader
+
+desc = describe_df(df)
+variables = desc['variables']
+variables = {k: v for k, v in variables.items() if str(v['type'] != 'Variabe.TYPE_UNSUPPORTED')}
+cats = {col: {'CAT': variables[col]['type'],
+              'n_unique': variables[col]['distinct_count'] if
+              str(variables[col]['type']) == "Variable.TYPE_CAT" else 0}
+        for col in variables.keys()}
+
+# get columns
+selected_options = [k for k, v in cats.items() if
+            (str(v['CAT']) == 'Variable.TYPE_CAT') and (int(v['n_unique']) < 10)]
+options = [k for k, v in cats.items()]
+# colnames = data_cols
 
 
 # -- SETTINGS
@@ -36,6 +43,15 @@ layout_kwargs = dict(plot_bgcolor='#263740',
                                              r=30, t=40,
                                              pad=5))
 
+table_layout_kwargs = dict(style_header={'backgroundColor': layout_kwargs['plot_bgcolor'],
+                                         'fontWeight': 'bold',
+                                         'fontSize': '2em'},
+                           style_cell={'backgroundColor': layout_kwargs['paper_bgcolor'],
+                                       'color': layout_kwargs['font']['color'],
+                                       'fontSize': '.7em',
+                                       'height': '5px'},
+                           style_cell_conditional=[{'if': {'column_id': 'var'},
+                                                   'textAlign': 'left'}])
 
 
 # -- FIGURES AND CONTROLS
@@ -55,7 +71,7 @@ filter_controls = [dcc.Dropdown(options=[{'label': x, 'value': x} for x in selec
 
 # -- APP
 app = dash.Dash(__name__,
-                assets_folder=os.path.join(os.path.dirname(__file__), '../macros/assets/'), )
+                assets_folder=os.path.join(os.path.dirname(__file__)), )
 app_title = 'Dash template'
 
 # -- LAYOUT
@@ -63,7 +79,8 @@ app.layout = html.Div([
     html.Div([
         row([
             column([html.H1(app_title), *controls,
-                    html.H2("Filter by:"), *filter_controls], className='two columns'),
+                    html.H2("Filter by:"), *filter_controls,
+                    du.data_profile_tables(variables, layout_kwargs=table_layout_kwargs)], className='two columns'),
             column(figure_childs, className='ten columns'), ])
     ]),
 ])
@@ -76,8 +93,8 @@ app.layout = html.Div([
                Input('slider_0', 'value'),
                Input('filter_dropdown', 'value')
                ])
-def make_histogram1(col, bins, filter,):
-    return du.make_histogram(df, col, bins, filter, layout_kwargs)
+def make_histogram1(col, bins, color_filter,):
+    return du.make_histogram(df, col, bins, color_filter, layout_kwargs)
 
 
 @app.callback(Output('fig_1', 'figure'),
@@ -86,8 +103,8 @@ def make_histogram1(col, bins, filter,):
                Input('filter_dropdown', 'value')
                ]
               )
-def make_histogram2(col, bins, filter,):
-    return du.make_histogram(df, col, bins, filter, layout_kwargs)
+def make_histogram2(col, bins, color_filter,):
+    return du.make_histogram(df, col, bins, color_filter, layout_kwargs)
 
 
 @app.callback(Output('fig_2', 'figure'),
@@ -95,9 +112,28 @@ def make_histogram2(col, bins, filter,):
                Input('dropdown_3', 'value'),
                Input('filter_dropdown', 'value')
                ])
-def make_scatter1(x, y, filter,):
-    return du.make_scatter(df, x, y, filter, layout_kwargs)
+def make_scatter1(x, y, color_filter,):
+    return du.make_scatter(df, x, y, color_filter, layout_kwargs)
+
+
+@app.callback(Output('table', 'data'),
+              [Input('dropdown_0', 'value')])
+def update_describe(col):
+
+    if (col != 0) and (col is not None):
+        return du.data_profile_tables(variables, col).data
+    else:
+        return []
+
+
+@app.callback(Output('table', 'style_data_conditional'),
+              [Input('dropdown_0', 'value')])
+def update_describe_cols(col):
+    if (col != 0) and (col is not None):
+        return du.data_profile_tables(variables, col).style_data_conditional
+    else:
+        return []
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8089)
+    app.run_server(debug=False, port=8089)

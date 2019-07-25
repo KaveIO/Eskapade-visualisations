@@ -171,21 +171,21 @@ def make_histogram(df, col, bins, color_filter, layout_kwargs, sel=None,):
         return {'data': [],
                 'layout': go.Layout(title="Please select a variable",
                                     **layout_kwargs)}
-    if filter is None:
+    if color_filter is None:
         return {'data': [go.Histogram(x=df[col].values, nbinsx=bins,
                                       )],
                 'layout': go.Layout(title=f'{col.capitalize()}', **layout_kwargs)}
 
     else:
 
-        pal = sns.palettes.color_palette('viridis', n_colors=len(df[filter].unique()))
+        pal = sns.palettes.color_palette('viridis', n_colors=len(df[color_filter].unique()))
         pal = pal.as_hex()
-        return {'data': [go.Histogram(x=df.loc[df[filter] == x, col],
+        return {'data': [go.Histogram(x=df.loc[df[color_filter] == x, col],
                                       marker=dict(color=pal[i]),
                                       nbinsx=bins,
                                       name=str(x),
                                       )
-                         for i, x in enumerate(df[filter].unique())],
+                         for i, x in enumerate(df[color_filter].unique())],
                 'layout': go.Layout(title=f'{col.capitalize()}',
                                     **layout_kwargs)}
 
@@ -423,5 +423,8 @@ def data_profile_tables(input_vars={}, col='', layout_kwargs={}):
 
     else:
         data = []
+        conditional_formatting = {}
+
+    conditional_formatting = {**conditional_formatting, **layout_kwargs}
 
     return make_table(columns=columns, data=data, layout_kwargs=conditional_formatting)

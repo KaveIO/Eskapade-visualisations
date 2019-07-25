@@ -9,8 +9,6 @@ import seaborn as sns
 import os
 import plotly.graph_objs as go
 
-import pandas as pd
-import numpy as np
 from pandas_profiling.model.describe import describe as describe_df
 
 base_path = os.path.abspath(os.path.dirname(__file__))
@@ -140,12 +138,6 @@ def update_plot(value_x, hue, bins):
 def update_describe(col):
 
     if (col != 0) and (col is not None):
-        # input_vars = variables[col]
-        # input_vars = {k: v for k, v in input_vars.items() if not isinstance(v, (list, np.ndarray, pd.Series))}
-        # out = [{'description': k, 'value': str(v)} for k, v in input_vars.items()]
-        # output = pd.DataFrame.from_dict(out)
-        #
-        # return output.to_dict('records')
         return du.data_profile_tables(variables, col).data
     else:
         return []
@@ -170,4 +162,4 @@ def update_describe_cols(col):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)

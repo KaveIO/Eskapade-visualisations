@@ -1,33 +1,10 @@
-# Eskapade Visualisations
+# KPMG Visualisations (Viz_K)
 
- - Version: 0.1.0
- - Released: Januari 2019
+ - Version: 1.0.0
+ - Released: Juli 2019
  - Web page: http://eskapade.kave.io
  - Repository: https://github.com/kaveio/Eskapade-visualisations
 
-Eskapade is a light-weight, _python-based data analysis framework, meant
-for developing and modularizing all sorts of data analysis problems into
-reusable analysis components.
-
-Eskapade uses a modular approach to analytics, meaning that you can use
-pre-made operations (called 'links') to build an analysis. This is implemented in a chain-link framework, where you define a 'Chain', consisting of a number of Links. These links are the fundamental building block of your analysis. For example, a data loading link and a data transformation link will frequently be found together in a pre-processing Chain.
-
-Each chain has a specific purpose, for example: data quality checks of
-incoming data, pre-processing of data, booking and/or training of predictive
-algorithms, validation of these algorithms, and their evaluation. By using
-this work methodology, analysis links can be more easily reused in future
-data analysis projects.
-
-Eskapade is analysis-library agnostic. It is used to set up typical data
-analysis problems from multiple packages, e.g.: scikit-learn, Spark MLlib,
-and ROOT. Likewise, Eskapade can use a manner of different data structures
-to handle data, such as: pandas DataFrames, numpy arrays, Spark DataFrames/RDDs,
-and more.
-
-For example, Eskapade has been used as a self-learning framework for typical
-machine learning problems. Trained algorithms can predict real-time or batch data,
-these models can be evaluated over time, and Eskapade can bookkeep and retrain
-their algorithms.
 
 This specific module is to create a data exploration and demo app
 using Dash (https://dash.plot.ly/). In addition, there is an interactive demo
@@ -49,28 +26,30 @@ To install check out the github repository:
 
 Please see `dash_tutorial.rst` for more details on the tutorial and template.
 
-## Dash Heatmaps
+## Dash demo's
 
-We created two versions of the correlation heatmap interface: the dummy version
-and the link.
+We created a couple of demos to showcase what you can do with dash and the dash_utils in the package.
 
-**The dummy version**
+**df summary**
 
-Demonstrates the capabilities of the interface without
-actually calculating any correlations. It can handle both categorical and
-continuous data, and allows the user to manually change the number and edges of
-histogram bins. Since little calculation happens, this version is snappy and
-easy to work out new ideas on. The code is a standalone _python script located at
-`heatmap/bin_count_demo_dash.py`.
+Remix of the original df_summary link in Eskapade, now reworked to incorporate the pandas_profiling
+calculations as well.
+You can run the application by calling ``python [path/to/]df_summary.py`` which will then run on
+`http://localhost:8050`. You can select any variable and it will be plotted in either a barchart
+or a histogram, depending on the data type. In addition, the calculated values from
+the pandas_profiling will be shown in the table next to it.
 
-**The link version**
+TODO: Add a data uploader
 
-Consists of the `CorrelationFrontend` link, the use of
-which is demonstrated in `macros/correlation_analyser_diamonds.py`. The
-interface is almost the same as the dummy version, but in the backend the actual
-correlation heatmap is calculated. This version does not yet support editing
-the bin edges, and further development is pending the release of the `PhiK`
-package and corresponding correlation link to use as a back end.
+**template app**
+
+A template example using the functions from dash_utils, suchs as the figure_grid and the
+callback functions.
+It shows a basic example with 3 graphs and a table, that will respond to your selections. The app
+itself functions as an extension to the df_summary app. Where there you could only select a barchart,
+here you can also add a scatterplot and compare multiple variables.
+
+TODO: Add a data uploader
 
 **The Phi_K demo**
 

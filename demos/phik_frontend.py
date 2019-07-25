@@ -13,16 +13,12 @@ import phik, phik.binning
 import logging
 
 
-# df = pd.read_csv("../data/diamonds.csv", index_col=0)
 df = sns.load_dataset('diamonds')
 columns = df.columns
 
-mathjax = (
-    "https://cdnjs.cloudflare.com/ajax/libs"
-    "/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"
-)
+mathjax = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML'
 
-app = dash.Dash(__name__, assets_folder="../macros/assets")
+app = dash.Dash(__name__)
 app.scripts.append_script({"external_url": mathjax})
 app.title = "Phi_K demo"
 
@@ -525,4 +521,4 @@ def update_significance_display(x_bins, y_bins, x_col, y_col):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, host="0.0.0.0", port=8050)
+    app.run_server(debug=False, host="0.0.0.0", port=8050)
