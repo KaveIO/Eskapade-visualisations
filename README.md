@@ -1,4 +1,4 @@
-# KPMG Visualisations (Viz_K)
+# KPMG Visualisations (dash_utils)
 
  - Version: 1.0.0
  - Released: Juli 2019
