@@ -8,7 +8,7 @@ def setup_package() -> None:
     :rtype: None
     """
 
-    setup(name='viz_k',
+    setup(name='dash_utils',
           version='0.1.0',
           license='',
           author='KPMG N.V. The Netherlands',

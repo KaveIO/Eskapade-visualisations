@@ -18,9 +18,12 @@ columns = df.columns
 
 mathjax = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML'
 
-app = dash.Dash(__name__)
-app.scripts.append_script({"external_url": mathjax})
-app.title = "Phi_K demo"
+# in place so we can reuse this script in multipage app. If run stand-alone, new all is initialized
+# if __name__ == 'phik_frontend':
+#     from app import app
+# else:
+#     app = dash.Dash(__name__)
+
 
 
 class Ids:
@@ -206,7 +209,7 @@ first_heatmap_kwargs = heatmap_kwargs(
     first_heatmap, first_edges_x, first_edges_y
 )
 
-app.layout = html.Div(
+layout = html.Div(
     children=[
         html.H1(
             "\( \phi_k \) Demo",
@@ -332,6 +335,16 @@ app.layout = html.Div(
     ]
 )
 
+# --  app
+# in place so we can reuse this script in multipage app. If run stand-alone, new all is initialized
+if __name__ == "df_summary":
+    from app import app
+else:
+    app = dash.Dash(__name__)
+    app.layout = layout
+    app.scripts.append_script({"external_url": mathjax})
+    app.title = "Phi_K demo"
+# -- update functions
 
 # TODO: label raw bin values
 # TODO: optional additional bin labels (for adding counts)

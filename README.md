@@ -43,7 +43,7 @@ TODO: Add a data uploader
 
 **template app**
 
-A template example using the functions from dash_utils, suchs as the figure_grid and the
+A template example using the functions from dash_utils, such as the figure_grid and the
 callback functions.
 It shows a basic example with 3 graphs and a table, that will respond to your selections. The app
 itself functions as an extension to the df_summary app. Where there you could only select a barchart,

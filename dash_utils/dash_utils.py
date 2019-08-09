@@ -92,7 +92,15 @@ def figure_grid(n_figures, figures=None, fig_names=None,
     return childs
 
 
-def control_grid(n_controls, controls):
+def control_grid(controls):
+    """
+    Helper function to set up a control grid
+
+    :param controls: the controls to add to be set in a grid (2*n)
+    :return: list of controls
+    """
+
+    n_controls = len(controls)
 
     if n_controls > 1:
         if n_controls % 2 == 0:
@@ -150,7 +158,7 @@ def return_selection(points1, points2, df):
     return sel
 
 
-def make_histogram(df, col, bins, color_filter, layout_kwargs, sel=None,):
+def make_histogram(df, col, bins, color_filter=None, layout_kwargs={}, sel=None,):
     """
     Returns a dictionary used on for the 'figure' argument of a dash graph object.
 
@@ -190,7 +198,7 @@ def make_histogram(df, col, bins, color_filter, layout_kwargs, sel=None,):
                                     **layout_kwargs)}
 
 
-def make_table(columns=None, data=None, id=None, layout_kwargs=None):
+def make_table(columns=None, data=None, id=None, layout_kwargs={}):
 
     if id is None:
         id = 'table'
@@ -220,7 +228,7 @@ def make_table(columns=None, data=None, id=None, layout_kwargs=None):
                                     **layout_kwargs)
 
 
-def make_scatter(df, x, y, color_filter, layout_kwargs, sel=None):
+def make_scatter(df, x, y, color_filter=None, layout_kwargs={}, sel=None):
     """
     Returns a go object used on the figure argument of the graph object
     in dash.
@@ -263,7 +271,8 @@ def make_scatter(df, x, y, color_filter, layout_kwargs, sel=None):
                                     **layout_kwargs)}
 
 
-def make_heatmap(values, xbins, ybins, labels, colorscale, cmap, layout_kwargs, sel=None):
+def make_heatmap(values, xbins, ybins, labels, colorscale,
+                 cmap, layout_kwargs={}, sel=None, title=''):
     """
 
     :param values:
@@ -283,7 +292,7 @@ def make_heatmap(values, xbins, ybins, labels, colorscale, cmap, layout_kwargs, 
                                    zmin=colorscale[0],
                                    zmax=colorscale[-1],
                                    zsmooth='best')],
-               'layout': go.Layout(title=f'Punctuality',
+               'layout': go.Layout(title=title,
                                    **layout_kwargs)}
     else:
         return {'data': [go.Heatmap(z=values.T,
@@ -293,7 +302,7 @@ def make_heatmap(values, xbins, ybins, labels, colorscale, cmap, layout_kwargs, 
                                     zmax=colorscale[-1],
                                     text=labels.T,
                                     hoverinfo=['text', 'z'])],
-                'layout': go.Layout(title=f'Punctuality',
+                'layout': go.Layout(title=title,
                                     height=800,
                                     width=800,
                                     **layout_kwargs,)}
@@ -323,7 +332,7 @@ def make_control_list(control_strings):
     :return:
 
     Example input:
-        [{"Name": "Histogram", "args": {"Options":[1,2,3],"value":None}]
+        [{"name": "Dropdown", "args": {"options":[1,2,3],"value":None}}]
     """
     control_list = []
     for c in control_strings:
@@ -333,6 +342,13 @@ def make_control_list(control_strings):
 
 
 def matplotlib_to_plotly(cmap, pl_entries):
+    """
+    Convert a matplotlib color map to a plotly colormap
+
+    :param cmap cmap: matplotlib colormap. ex matplotlib.cm.get_cmap('viridis')
+    :param int pl_entries: number of colors
+    :return: plotly colorscale
+    """
     h = 1.0/(pl_entries-1)
     pl_colorscale = []
 
@@ -343,7 +359,15 @@ def matplotlib_to_plotly(cmap, pl_entries):
     return pl_colorscale
 
 
-def data_profile_tables(input_vars={}, col='', layout_kwargs={}):
+def data_profile_tables(input_vars={}, col='', layout_kwargs={}, id=None):
+    """
+    Create a table based on pandas-profiling output
+    :param dict input_vars: input variables from describe(df) from pandas-profiling or reportipy
+    :param str col: name of the column/variable to show stats of
+    :param dict layout_kwargs: layout options for the table
+    :param str id: id for the table object
+    :return:
+    """
 
     columns = [{'name': 'Variable', 'id': 'var'}, {'name': 'Value', 'id': 'value'}]
 
@@ -427,4 +451,4 @@ def data_profile_tables(input_vars={}, col='', layout_kwargs={}):
 
     conditional_formatting = {**conditional_formatting, **layout_kwargs}
 
-    return make_table(columns=columns, data=data, layout_kwargs=conditional_formatting)
+    return make_table(columns=columns, data=data, layout_kwargs=conditional_formatting, id=id)

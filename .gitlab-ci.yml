@@ -1,0 +1,45 @@
+image: python:3.6-jessie
+
+before_script:
+  - pip install pip --upgrade
+
+variables:
+  PYPI_REPOSITORY: SECURE
+  PYPI_USERNAME: SECURE
+  PYPI_PASSWORD: SECURE
+
+stages:
+  - test
+  - deploy
+
+# put your tests here
+image: python:3.6-jessie
+test36:
+  stage: test
+  script:
+  - pip install pytest pytest-cov
+  - pip install -r requirements.txt
+  - pip install .
+  - cd tests
+  - pytest --cov reportipy
+  only:
+  - merge_requests
+
+deploy_pypi:
+  stage: deploy
+  script:
+    - pip install twine setuptools wheel
+    - python3 setup.py bdist_wheel #build the package
+    - pip install .
+    - echo "[distutils]" >> ~/.pypirc # create credential file
+    - echo "index-servers =" >> ~/.pypirc
+    - echo "  aabd" >> ~/.pypirc
+    - echo "" >> ~/.pypirc
+    - echo "[aabd]" >> ~/.pypirc
+    - echo "repository:" $PYPI_REPOSITORY >> ~/.pypirc
+    - echo "username:" $PYPI_USERNAME >> ~/.pypirc
+    - echo "password:" "$PYPI_PASSWORD" >> ~/.pypirc
+    - twine upload --repository aabd dist/* # upload to server
+    - echo "" > ~/.pypirc && rm ~/.pypirc
+  only:
+    - master
