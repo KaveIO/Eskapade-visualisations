@@ -123,7 +123,15 @@ def control_grid(controls):
     return childs
 
 
-def return_selection(points1, points2, df):
+def _return_selection(points1, points2, df):
+    """
+    Lel I dont know what this does
+
+    :param points1:
+    :param points2:
+    :param df:
+    :return:
+    """
 
     if points1 is not None:
         try:
@@ -199,6 +207,15 @@ def make_histogram(df, col, bins, color_filter=None, layout_kwargs={}, sel=None,
 
 
 def make_table(columns=None, data=None, id=None, layout_kwargs={}):
+    """
+    Create a dash table based on a dataframe as input. Makes porting everything to dicts a bit easier
+
+    :param list columns: list of strings = column names
+    :param pd.DataFrame data: input dataframe, can be none when initializing table
+    :param str id: identifier for table object (for callbacks)
+    :param dict layout_kwargs: layout options for table
+    :return: dash_table object
+    """
 
     if id is None:
         id = 'table'
@@ -274,19 +291,23 @@ def make_scatter(df, x, y, color_filter=None, layout_kwargs={}, sel=None):
 def make_heatmap(values, xbins, ybins, labels, colorscale,
                  cmap, layout_kwargs={}, sel=None, title=''):
     """
+    Create a heatmap data dictionary
 
-    :param values:
-    :param xbins:
-    :param ybins:
-    :param labels:
-    :param colorscale:
-    :param cmap:
-    :param layout_kwargs:
-    :param sel: TODO: use them
+    :param np.array values: n*n array of values for the heatmap
+    :param int xbins: Number of bins in the x direction
+    :param int ybins: Number of bins in the y direction
+    :param np.array labels: n*n array of hover labels for the
+    :param list colorscale: where to snap the min and max of the colorscale (ex, [0, 1])
+    :param colormap cmap: plotly colorscale, see du.matplotlib_to_plotly
+    :param dict layout_kwargs: Layout options for figure
     :return:
     """
 
-    if (xbins is None) or (ybins is None):
+    if not isinstance(cmap, list):
+        # if the cmap is a colormap, try to parse it to a plotly colorscale
+        cmap = matplotlib_to_plotly(cmap, 4)
+
+    if (xbins is None) or (ybins is None):  # wait what we don't do anything with the bins??
         return{'data': [go.Heatmap(z=values.T,
                                    colorscale=cmap,
                                    zmin=colorscale[0],
