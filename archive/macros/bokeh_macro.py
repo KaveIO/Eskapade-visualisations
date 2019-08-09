@@ -1,4 +1,4 @@
-"""Project: Eskapade - A python-based package for data analysis.
+"""Project: Eskapade - A _python-based package for data analysis.
 
 Macro: bokeh_macro.py
 

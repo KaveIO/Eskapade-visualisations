@@ -56,7 +56,7 @@ def figure_grid(n_figures, figures=None, fig_names=None,
                                                      r=30, t=40,
                                                      pad=5))
 
-    if (n_figures > 1):
+    if n_figures > 1:
         if n_figures % 2 == 0:
             index = np.arange(n_figures).reshape(2, -1)
         else:
@@ -223,6 +223,30 @@ def make_scatter(df, x, y, filter, layout_kwargs, sel=None):
                 'layout': go.Layout(title=f'{x.capitalize()} vs {y.capitalize()}',
                                     **layout_kwargs)}
 
+def make_heatmap(values, xbins, ybins, labels, colorscale, cmap, layout_kwargs, sel=None):
+
+    # if sel is None:
+    #     sel = df.index
+    if (xbins is None) or (ybins is None):
+        return{'data':[go.Heatmap(z=values.T,
+                                  colorscale=cmap,
+                                  zmin=colorscale[0],
+                                  zmax=colorscale[-1],
+                                  zsmooth='best')],
+               'layout':go.Layout(title=f'Punctuality',
+                                    **layout_kwargs)}
+    else:
+        return {'data': [go.Heatmap(z=values.T,
+                                    colorscale=cmap,
+                                    zsmooth='best',
+                                    zmin=colorscale[0],
+                                    zmax=colorscale[-1],
+                                    text=labels.T,
+                                    hoverinfo=['text','z'])],
+                'layout': go.Layout(title=f'Punctuality',
+                                    height=800,
+                                    width=800,
+                                    **layout_kwargs,)}
 
 def make_go_list(go_strings):
     """
@@ -254,3 +278,13 @@ def make_control_list(control_strings):
         control = getattr(dcc, c['name'].capitalize())
         control_list.append(control(**c['args']))
     return control_list
+
+def matplotlib_to_plotly(cmap, pl_entries):
+    h = 1.0/(pl_entries-1)
+    pl_colorscale = []
+
+    for k in range(pl_entries):
+        C = list(map(np.uint8, np.array(cmap(k*h)[:3])*255))
+        pl_colorscale.append([k*h, 'rgb'+str((C[0], C[1], C[2]))])
+
+    return pl_colorscale
